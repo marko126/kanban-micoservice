@@ -42,3 +42,7 @@ Route::put('users/update/{id}', 'UserController@update');
 Route::delete('users/delete/{id}', 'UserController@delete');
 
 Route::post('register', 'Auth\RegisterController@register');
+
+Route::post('login', 'Auth\LoginController@login');
+
+Route::post('logout', 'Auth\LoginController@logout');
