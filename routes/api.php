@@ -17,32 +17,36 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Ticket routes
+Route::group(['middleware' => 'auth:api'], function() {
+    
+    // Ticket routes
 
-Route::get('tickets', 'TicketController@index');
+    Route::get('tickets', 'TicketController@index');
 
-Route::get('tickets/{id}', 'TicketController@show');
+    Route::get('tickets/{id}', 'TicketController@show');
 
-Route::post('tickets/create', 'TicketController@store');
+    Route::post('tickets/create', 'TicketController@store');
 
-Route::put('tickets/update/{id}', 'TicketController@update');
+    Route::put('tickets/update/{id}', 'TicketController@update');
 
-Route::delete('tickets/delete/{id}', 'TicketController@delete');
+    Route::delete('tickets/delete/{id}', 'TicketController@delete');
 
-// User routes
+    // User routes
 
-Route::get('users', 'UserController@index');
+    Route::get('users', 'UserController@index');
 
-Route::get('users/{id}', 'UserController@show');
+    Route::get('users/{id}', 'UserController@show');
 
-Route::post('users/create', 'UserController@store');
+    Route::post('users/create', 'UserController@store');
 
-Route::put('users/update/{id}', 'UserController@update');
+    Route::put('users/update/{id}', 'UserController@update');
 
-Route::delete('users/delete/{id}', 'UserController@delete');
+    Route::delete('users/delete/{id}', 'UserController@delete');
 
-Route::post('register', 'Auth\RegisterController@register');
+    Route::post('register', 'Auth\RegisterController@register');
 
-Route::post('login', 'Auth\LoginController@login');
+    Route::post('login', 'Auth\LoginController@login');
 
-Route::post('logout', 'Auth\LoginController@logout');
+    Route::post('logout', 'Auth\LoginController@logout');
+
+});
