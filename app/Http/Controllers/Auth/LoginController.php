@@ -26,7 +26,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+   // protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
@@ -71,7 +71,7 @@ class LoginController extends Controller
      */
     public function logout(Request $request)
     {
-        $user = Auth::guard('api')->user();
+        $user = $this->guard('api')->user();
         
         if ($user) {
             $user->api_token = null;

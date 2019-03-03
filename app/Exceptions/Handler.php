@@ -61,12 +61,13 @@ class Handler extends ExceptionHandler
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Illuminate\Auth\AuthenticationException  $exception
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    protected function unauthenticated($request, AuthenticationException $exception)
+    protected function unauthenticated($request, \Illuminate\Auth\AuthenticationException $exception): \Symfony\Component\HttpFoundation\Response 
     {
         return response()->json([
-            'error' => 'Unauhenticated'
+            'error' => 'Unauthenticated'
         ], 401);
     }
+
 }

@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::post('tickets/create', 'TicketController@store');
 
     Route::put('tickets/update/{id}', 'TicketController@update');
+    
+    Route::put('tickets/updatepriority/{id}', 'TicketController@updatePriority');
 
     Route::delete('tickets/delete/{id}', 'TicketController@delete');
 
@@ -43,10 +45,12 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::delete('users/delete/{id}', 'UserController@delete');
 
-    Route::post('register', 'Auth\RegisterController@register');
-
-    Route::post('login', 'Auth\LoginController@login');
-
     Route::post('logout', 'Auth\LoginController@logout');
 
 });
+
+Route::post('register', 'Auth\RegisterController@register');
+
+    Route::post('login', 'Auth\LoginController@login');
+
+    
