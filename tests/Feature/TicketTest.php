@@ -19,7 +19,7 @@ class TicketTest extends TestCase
         factory(Ticket::class)->create([
             'title' => 'Test ticket #1',
             'description' => 'This is a test ticket #1',
-            'status' => 1,
+            'status' => Ticket::STATUS_TO_DO,
             'priority' => 1,
             'user_id' => $user->id
         ]);
@@ -27,7 +27,7 @@ class TicketTest extends TestCase
         factory(Ticket::class)->create([
             'title' => 'Test ticket #2',
             'description' => 'This is a test ticket #2',
-            'status' => 1,
+            'status' => Ticket::STATUS_IN_PROGRESS,
             'priority' => 2,
             'user_id' => $user->id
         ]);
@@ -38,14 +38,14 @@ class TicketTest extends TestCase
                 [
                     'title' => 'Test ticket #1',
                     'description' => 'This is a test ticket #1',
-                    'status' => 1,
+                    'status' => Ticket::STATUS_TO_DO,
                     'priority' => 1,
                     'user_id' => $user->id
                 ],
                 [
                     'title' => 'Test ticket #2',
                     'description' => 'This is a test ticket #2',
-                    'status' => 1,
+                    'status' => Ticket::STATUS_IN_PROGRESS,
                     'priority' => 2,
                     'user_id' => $user->id
                 ]
@@ -64,8 +64,7 @@ class TicketTest extends TestCase
         $data = [
             'title' => 'Test ticket',
             'description' => 'This is a test ticket',
-            'status' => 1,
-            'priority' => 1,
+            'status' => Ticket::STATUS_TO_DO,
             'user_id' => $user->id
         ];
 
@@ -74,8 +73,7 @@ class TicketTest extends TestCase
             ->assertJson([
                 'title' => 'Test ticket',
                 'description' => 'This is a test ticket',
-                'status' => 1,
-                'priority' => 1,
+                'status' => Ticket::STATUS_TO_DO,
                 'user_id' => $user->id
             ]);
     }
@@ -89,7 +87,7 @@ class TicketTest extends TestCase
         $ticket = factory(Ticket::class)->create([
             'title' => 'Test ticket',
             'description' => 'This is a test ticket',
-            'status' => 1,
+            'status' => Ticket::STATUS_TO_DO,
             'priority' => 1,
             'user_id' => $user->id
         ]);
@@ -117,7 +115,7 @@ class TicketTest extends TestCase
         $ticket1 = factory(Ticket::class)->create([
             'title' => 'Test ticket #1',
             'description' => 'This is a test ticket #1',
-            'status' => 1,
+            'status' => Ticket::STATUS_TO_DO,
             'priority' => 1,
             'user_id' => $user->id
         ]);
@@ -125,7 +123,7 @@ class TicketTest extends TestCase
         $ticket2 = factory(Ticket::class)->create([
             'title' => 'Test ticket #2',
             'description' => 'This is a test ticket #2',
-            'status' => 1,
+            'status' => Ticket::STATUS_TO_DO,
             'priority' => 2,
             'user_id' => $user->id
         ]);
@@ -133,7 +131,7 @@ class TicketTest extends TestCase
         $ticket3 = factory(Ticket::class)->create([
             'title' => 'Test ticket #3',
             'description' => 'This is a test ticket #3',
-            'status' => 1,
+            'status' => Ticket::STATUS_TO_DO,
             'priority' => 3,
             'user_id' => $user->id
         ]);
@@ -161,12 +159,37 @@ class TicketTest extends TestCase
         $ticket = factory(Ticket::class)->create([
             'title' => 'Test ticket',
             'description' => 'This is a test ticket',
-            'status' => 1,
+            'status' => Ticket::STATUS_DONE,
             'priority' => 1,
             'user_id' => $user->id
         ]);
 
         $this->json('DELETE', '/api/tickets/delete/' . $ticket->id, [], $headers)
             ->assertStatus(204);
+    }
+    
+    public function testsTicketInvalidateData()
+    {
+        $user = factory(User::class)->create();
+        $token = $user->generateToken();
+        $headers = ['Authorization' => "Bearer $token"];
+        
+        $data = [
+            'title' => 'Test',
+            'description' => 'This is a test ticket',
+            'status' => 0,
+            'user_id' => $user->id
+        ];
+
+        $this->json('POST', '/api/tickets/create', $data, $headers)
+            ->assertStatus(200)
+            ->assertJson([
+                'title' => [
+                    "The title must be at least 5 characters."
+                ],
+                'status' => [
+                    "The selected status is invalid."
+                ]
+            ]);
     }
 }

@@ -49,7 +49,6 @@ class UserTest extends TestCase
         $data = [
             'name' => 'Test User',
             'email' => "testuser@testsite.com",
-            'email_verified_at' => now(),
             'password' => 'guestfriend',
             'remember_token' => Str::random(10),
         ];
@@ -71,7 +70,6 @@ class UserTest extends TestCase
         $userTest = factory(User::class)->create([
             'name' => 'Test User',
             'email' => "testuser@testsite.com",
-            'email_verified_at' => now(),
             'password' => 'guestfriend',
             'remember_token' => Str::random(10),
         ]);
@@ -96,12 +94,36 @@ class UserTest extends TestCase
         $userTest = factory(User::class)->create([
             'name' => 'Test User',
             'email' => "testuser@testsite.com",
-            'email_verified_at' => now(),
             'password' => 'guestfriend',
             'remember_token' => Str::random(10),
         ]);
 
         $this->json('DELETE', '/api/users/delete/' . $userTest->id, [], $headers)
             ->assertStatus(204);
+    }
+    
+    public function testsUserInvalidateData()
+    {
+        $user = factory(User::class)->create();
+        $token = $user->generateToken();
+        $headers = ['Authorization' => "Bearer $token"];
+        
+        $data = [
+            'name' => 'T',
+            'email' => "testuser",
+            'password' => 'guestfriend',
+            'remember_token' => Str::random(10),
+        ];
+
+        $this->json('POST', '/api/users/create', $data, $headers)
+            ->assertStatus(200)
+            ->assertJson([
+                "name" => [
+                    "The name must be at least 2 characters."
+                ],
+                "email" => [
+                    "The email must be a valid email address."
+                ]
+            ]);
     }
 }
